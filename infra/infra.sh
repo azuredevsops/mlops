@@ -12,8 +12,6 @@ az group create --name $RG --location $LOCATION
 echo "Creating Azure ML workspace..."
 az ml workspace create --name $WS --resource-group $RG --location $LOCATION
 
-echo "Setting workspace context..."
-az ml workspace set --name $WS --resource-group $RG
 
 echo "Creating compute cluster..."
 az ml compute create --name cpu-cluster \
@@ -32,5 +30,5 @@ az ml data upload \
   --target-path data/test.csv \
   --datastore-name workspaceblobstore
 
-echo "✅ Infra setup complete."
+echo "Infra setup complete."
 
