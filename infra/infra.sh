@@ -2,8 +2,8 @@
 
 set -e  # Exit on error
 
-RG="my-visua-2"
-WS="my-ml-ws-2"
+RG="my-vis"
+WS="my-ml-ts-2"
 LOCATION="eastus"
 
 echo "Creating resource group..."
@@ -22,16 +22,21 @@ az ml compute create --name cpu-cluster \
   --resource-group "$RG" \
   --workspace-name "$WS"
 
-echo "Uploading train.csv and test.csv..."
-az ml data upload \
+echo "Registering train.csv as dataset..."
+az ml data create --name train-csv \
+  --type uri_file \
   --path ./data/train.csv \
-  --target-path data/train.csv \
-  --datastore-name workspaceblobstore
+  --description "Training data" \
+  --resource-group "$RG" \
+  --workspace-name "$WS"
 
-az ml data upload \
+echo "Registering test.csv as dataset..."
+az ml data create --name test-csv \
+  --type uri_file \
   --path ./data/test.csv \
-  --target-path data/test.csv \
-  --datastore-name workspaceblobstore
+  --description "Testing data" \
+  --resource-group "$RG" \
+  --workspace-name "$WS"
 
 echo "Infra setup complete."
 
