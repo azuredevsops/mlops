@@ -23,3 +23,11 @@ jobs:
           azcliversion: latest
           inlineScript: |
             az account show
+      - name: Install Azure ML CLI
+        run: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          az extension add -n ml -y
+
+      - name: Run infra.sh
+        run: bash ./infra.sh  
+
