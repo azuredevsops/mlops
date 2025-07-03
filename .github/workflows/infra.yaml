@@ -29,7 +29,7 @@ jobs:
           az extension add -n ml -y
 
       - name: Run infra.sh
-        run: chmod +x /infra/infra.sh 
+        run: chmod +x infra/infra.sh 
       - name: Run infra.sh 
         run: ./infra/infra.sh
                 
