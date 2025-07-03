@@ -1,17 +1,36 @@
-RESOURCE_GROUP= "my-mlops-group"
-LOCATION="eastus2"
-WORKSPACE_NAME="ml-mlops-workspace-visualpath"
-CLUSTER_NAME= "mlops-cluster-visualpath"
+#!/bin/bash
 
-az group create -n $RESOURCE_GROUP -l $LOCATION
+set -e  # Exit on error
 
-az ml workspace create -n $WORKSPACE_NAME -g $RESOURCE_GROUP -l $LOCATION
+RG="my-visual"
+WS="my-ml-ws"
+LOCATION="eastus"
 
-az ml workspace set -g $RESOURCE_GROUP -w $WORKSPACE_NAME
+echo "Creating resource group..."
+az group create --name $RG --location $LOCATION
 
-az ml compute create --name $CLUSTER_NAME \
-   --type Amlcompute \
-   --size Standard_DS11_v2 \
-   --min-instance 0 --max-instance 2
+echo "Creating Azure ML workspace..."
+az ml workspace create --name $WS --resource-group $RG --location $LOCATION
 
-   
+echo "Setting workspace context..."
+az ml workspace set --name $WS --resource-group $RG
+
+echo "Creating compute cluster..."
+az ml compute create --name cpu-cluster \
+  --type AmlCompute \
+  --size Standard_DS2_v2 \
+  --min-instances 0 --max-instances 2
+
+echo "Uploading train.csv and test.csv..."
+az ml data upload \
+  --path ./data/train.csv \
+  --target-path data/train.csv \
+  --datastore-name workspaceblobstore
+
+az ml data upload \
+  --path ./data/test.csv \
+  --target-path data/test.csv \
+  --datastore-name workspaceblobstore
+
+echo "✅ Infra setup complete."
+
