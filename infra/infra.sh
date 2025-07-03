@@ -2,8 +2,8 @@
 
 set -e  # Exit on error
 
-RG="my-visua-1"
-WS="my-ml-ws-1"
+RG="my-visua-2"
+WS="my-ml-ws-2"
 LOCATION="eastus"
 
 echo "Creating resource group..."
@@ -17,7 +17,10 @@ echo "Creating compute cluster..."
 az ml compute create --name cpu-cluster \
   --type AmlCompute \
   --size Standard_DS2_v2 \
-  --min-instances 0 --max-instances 2
+  --min-instances 0 \
+  --max-instances 2 \
+  --resource-group "$RG" \
+  --workspace-name "$WS"
 
 echo "Uploading train.csv and test.csv..."
 az ml data upload \
