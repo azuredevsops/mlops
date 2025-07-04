@@ -1,17 +1,42 @@
-RESOURCE_GROUP= "my-mlops-group"
-LOCATION="eastus2"
-WORKSPACE_NAME="ml-mlops-workspace-visualpath"
-CLUSTER_NAME= "mlops-cluster-visualpath"
+#!/bin/bash
 
-az group create -n $RESOURCE_GROUP -l $LOCATION
+set -e  # Exit on error
 
-az ml workspace create -n $WORKSPACE_NAME -g $RESOURCE_GROUP -l $LOCATION
+RG="mlops-training"
+WS="mlops-training-visual"
+LOCATION="eastus"
 
-az ml workspace set -g $RESOURCE_GROUP -w $WORKSPACE_NAME
+echo "Creating resource group..."
+az group create --name $RG --location $LOCATION
 
-az ml compute create --name $CLUSTER_NAME \
-   --type Amlcompute \
-   --size Standard_DS11_v2 \
-   --min-instance 0 --max-instance 2
+echo "Creating Azure ML workspace..."
+az ml workspace create --name $WS --resource-group $RG --location $LOCATION
 
-   
+
+echo "Creating compute cluster..."
+az ml compute create --name cpu-cluster \
+  --type AmlCompute \
+  --size Standard_DS2_v2 \
+  --min-instances 0 \
+  --max-instances 2 \
+  --resource-group "$RG" \
+  --workspace-name "$WS"
+
+echo "Registering train.csv as dataset..."
+az ml data create --name train-csv \
+  --type uri_file \
+  --path ./data/train.csv \
+  --description "Training data" \
+  --resource-group "$RG" \
+  --workspace-name "$WS"
+
+echo "Registering test.csv as dataset..."
+az ml data create --name test-csv \
+  --type uri_file \
+  --path ./data/test.csv \
+  --description "Testing data" \
+  --resource-group "$RG" \
+  --workspace-name "$WS"
+
+echo "Infra setup complete."
+
