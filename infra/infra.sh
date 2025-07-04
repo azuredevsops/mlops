@@ -2,8 +2,8 @@
 
 set -e  # Exit on error
 
-RG="my-vis"
-WS="my-ml-ts-2"
+RG="mlops-training"
+WS="mlops-training-visual"
 LOCATION="eastus"
 
 echo "Creating resource group..."
