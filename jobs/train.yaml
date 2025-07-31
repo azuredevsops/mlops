@@ -1,0 +1,21 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+
+command: 
+  python model/train.py
+  --input_data ${{inputs.train.data}}
+  --output_data ${{outputs.model_output}}
+
+code: .
+environment: azureml:lung-cancer-env-1
+inputs:
+   train_data:
+   type: url_file
+   path: azureml://datastores/worksspaceblobstore/paths/data/train.csv
+
+outputs:
+  model_output:
+  type: url_folder
+compute: azureml:cpu-cluster
+experiment_name: lung_cancer_train
+description: Train logistic regression model for lun cancer detection 
+

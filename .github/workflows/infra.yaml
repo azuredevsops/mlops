@@ -1,0 +1,36 @@
+name: Infra
+permissions:
+  id-token: write
+  contents: read
+on: 
+   push
+
+jobs:
+  setup-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Azure-login
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+      - name: Install Azure ML CLI
+        run: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          az extension add -n ml -y
+
+      - name: Run infra.sh
+        run: chmod +x infra/infra.sh 
+      - name: Run infra.sh 
+        run: ./infra/infra.sh
+                
+
