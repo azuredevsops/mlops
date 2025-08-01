@@ -1,0 +1,19 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+name: lung_cancer_endpoint
+endpoint_name: lung_cancer_endpoint
+type: online
+auth_type: key
+
+defaults: 
+  deployment_name: default
+
+deployments:
+  - name: default
+    model:
+      path: azureml://datastores/worksspaceblobstore/paths/outputs/model_output/
+    environment: azureml:lung-cancer-env-1
+    code_configuration:
+      code: model
+      scoring_script: score.py
+    instance_type: Standard_DS2_v2
+    instance_count: 1
